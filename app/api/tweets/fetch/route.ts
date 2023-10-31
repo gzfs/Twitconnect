@@ -7,29 +7,16 @@ export async function POST(
   const postBody = await postReq.json();
   const userID = postBody.userID;
 
-  const recTweets: Tweet[] = [
-    {
-      tweet_id: 0,
-      content: "Javascript Sucks",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-    {
-      tweet_id: 1,
-      content: "Javascript Nice",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-    {
-      tweet_id: 2,
-      content: "Javascript Bruh",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-  ];
+  const mockTweet = await (
+    await fetch(`${process.env.BASE_URL}/api/tweet/${92197}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  ).json();
+
+  const recTweets: Tweet[] = [mockTweet];
 
   return NextResponse.json(recTweets);
 }

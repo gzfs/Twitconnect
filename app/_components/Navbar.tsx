@@ -21,7 +21,13 @@ export function IcBaselineAccountCircle(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function Navbar({ userSession }: { userSession: Session }) {
+export default function Navbar({
+  userSession,
+  userHandle,
+}: {
+  userSession: Session;
+  userHandle: string;
+}) {
   const [isMiniMenuVisible, setIsMiniMenuVisible] = useState(false);
   return (
     <div className="grid grid-cols-6 gap-x-6 my-5">
@@ -54,7 +60,7 @@ export default function Navbar({ userSession }: { userSession: Session }) {
           {isMiniMenuVisible ? (
             <div className="absolute top-12 text-xs right-5 bg-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] px-6 rounded-2xl">
               <div className="py-3">
-                <Link href="/user/gzfs">Profile</Link>
+                <Link href={`/user/${userHandle}`}>Profile</Link>
               </div>
               <hr />
               <button

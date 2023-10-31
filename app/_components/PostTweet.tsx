@@ -1,16 +1,18 @@
 import { useState } from "react";
 import ImageUpload from "./ImageUpload";
-import { Tweet } from "../_types/Tweet.types";
+import { Tweet, TweetResponse } from "../_types/Tweet.types";
 
 export default function PostTweet({
+  userID,
   userPhoto,
   setInitialTweets,
   initialTweets,
   userHandle,
 }: {
+  userID: number;
   userPhoto: string;
   setInitialTweets: CallableFunction;
-  initialTweets: Tweet[] | undefined;
+  initialTweets: TweetResponse[] | undefined;
   userHandle: string;
 }) {
   const [postText, setPostText] = useState("");
@@ -67,21 +69,36 @@ export default function PostTweet({
                   method: "POST",
                   body: imageUrl
                     ? JSON.stringify({
-                        userID: userHandle,
+                        userID: userID,
                         tweetContent: postText,
                         tweetImage: imageUrl,
                       })
                     : JSON.stringify({
-                        userID: userHandle,
+                        userID: userID,
                         tweetContent: postText,
                       }),
                 })
               ).json();
               setUploadState(false);
               if (initialTweets) {
-                setInitialTweets([addedPost, ...initialTweets]);
+                setInitialTweets([
+                  {
+                    message: "Tweet found.",
+                    status: "success",
+                    time_taken: "1ms",
+                    tweet: addedPost,
+                  },
+                  ...initialTweets,
+                ]);
               } else {
-                setInitialTweets([addedPost]);
+                setInitialTweets([
+                  {
+                    message: "Tweet found.",
+                    status: "success",
+                    time_taken: "1ms",
+                    tweet: addedPost,
+                  },
+                ]);
               }
             }}
           >

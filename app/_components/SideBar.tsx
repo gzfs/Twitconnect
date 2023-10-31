@@ -4,6 +4,7 @@ import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, type SVGProps } from "react";
+import { Data } from "../page";
 
 export function IcBaselineAccountCircle(props: SVGProps<SVGSVGElement>) {
   return (
@@ -22,7 +23,13 @@ export function IcBaselineAccountCircle(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function Sidebar({ userSession }: { userSession: Session }) {
+export default function Sidebar({
+  userSession,
+  userHandle,
+}: {
+  userSession: Data;
+  userHandle: string;
+}) {
   const [isMiniMenuVisible, setIsMiniMenuVisible] = useState(false);
 
   return (
@@ -49,7 +56,7 @@ export default function Sidebar({ userSession }: { userSession: Session }) {
               }}
             >
               <img
-                src={userSession.user?.image as string}
+                src={userSession.user?.profile_pic as string}
                 alt="Profile"
                 width={30}
                 className="rounded-full mt-2"
@@ -58,7 +65,7 @@ export default function Sidebar({ userSession }: { userSession: Session }) {
             {isMiniMenuVisible ? (
               <div className="absolute bottom-12 text-xs left-0 bg-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] px-6 rounded-2xl">
                 <div className="py-3">
-                  <Link href="/user/gzfs">Profile</Link>
+                  <Link href={`/user/${userHandle}`}>Profile</Link>
                 </div>
                 <hr />
                 <button

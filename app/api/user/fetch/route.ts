@@ -4,16 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(postReq: NextRequest): Promise<NextResponse<User>> {
   const postBody = await postReq.json();
   const userHandle = postBody.userHandle;
-  return NextResponse.json({
-    user_id: 1,
-    email: "vismdbs@gmail.com",
-    bio: "Ijboling 😎",
-    date_created: new Date(),
-    handle: "gzfs",
-    is_private: false,
-    profile_pic: "/assets/images/GigaMurugan.png",
-    updated_at: new Date(),
-    username: "Vishal",
-    date_updated: new Date(),
-  });
+
+  const fetchedUser: User = await (
+    await fetch(`${process.env.BASE_URL}/api/user/handle/${userHandle}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  ).json();
+
+  return NextResponse.json(fetchedUser);
 }

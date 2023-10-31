@@ -1,35 +1,41 @@
-import { Tweet } from "@/app/_types/Tweet.types";
+import { TweetResponse } from "@/app/_types/Tweet.types";
+import { Data } from "@/app/page";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  postReq: NextRequest
-): Promise<NextResponse<Tweet[]>> {
+export async function POST(postReq: NextRequest): Promise<
+  NextResponse<
+    | TweetResponse[]
+    | {
+        message: "No Post";
+        status: "200";
+        time_taken: "6ms";
+        tweet: undefined;
+      }[]
+  >
+> {
   const postBody = await postReq.json();
   const userID = postBody.userID;
 
-  const userTweets: Tweet[] = [
-    {
-      tweet_id: 0,
-      content: "Javascript Sucks",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-    {
-      tweet_id: 1,
-      content: "Javascript Nice",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-    {
-      tweet_id: 2,
-      content: "Javascript Bruh",
-      date_created: new Date(),
-      date_updated: new Date(),
-      user_id: 1,
-    },
-  ];
+  // const userTweets = await fetch(
+  //   `${process.env.BASE_URL}/api/user/${userID}/tweets`,
+  //   {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
 
-  return NextResponse.json(userTweets);
+  if (false) {
+    // return NextResponse.json(await userTweets.json());
+  } else {
+    return NextResponse.json([
+      {
+        message: "No Post",
+        status: "200",
+        time_taken: "6ms",
+        tweet: undefined,
+      },
+    ]);
+  }
 }
