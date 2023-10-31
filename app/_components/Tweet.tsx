@@ -1,6 +1,6 @@
 import { Session } from "next-auth";
 import { SVGProps, useEffect, useState } from "react";
-import { TweetResponse } from "../_types/Tweet.types";
+import { Tweet, TweetResponse } from "../_types/Tweet.types";
 import { Like } from "../_types/Like.types";
 import { ReplyWithUser } from "../_types/Replies.types";
 import { Data } from "../page";
@@ -67,7 +67,7 @@ export default function TweetBox({
   hydrateTweet,
 }: {
   userSession: Session;
-  hydrateTweet: TweetResponse;
+  hydrateTweet: Tweet;
 }) {
   const [userProfile, setUserProfile] = useState<Data>();
   const [postLikes, setPostLikes] = useState<Like[]>();
@@ -82,7 +82,7 @@ export default function TweetBox({
       fetch("/api/tweets/replies/fetch", {
         method: "POST",
         body: JSON.stringify({
-          tweetID: hydrateTweet.tweet?.tweet_id,
+          tweetID: hydrateTweet.tweet_id,
         }),
       })
         .then((recResponse) => {
@@ -96,7 +96,7 @@ export default function TweetBox({
       fetch("/api/user/fetch", {
         method: "POST",
         body: JSON.stringify({
-          userHandle: userSession?.user?.email?.split("@")[0],
+          userHandle: userSession.user?.email?.split("@")[0],
         }),
       })
         .then((recResponse) => {
@@ -110,7 +110,7 @@ export default function TweetBox({
       fetch("/api/user/fetchid", {
         method: "POST",
         body: JSON.stringify({
-          userID: hydrateTweet.tweet.user_id,
+          userID: hydrateTweet.user_id,
         }),
       })
         .then((recResponse) => {
@@ -124,7 +124,7 @@ export default function TweetBox({
       fetch("/api/tweets/likes/fetch", {
         method: "POST",
         body: JSON.stringify({
-          tweetID: hydrateTweet.tweet?.tweet_id,
+          tweetID: hydrateTweet?.tweet_id,
         }),
       })
         .then((recResponse) => {
@@ -135,7 +135,7 @@ export default function TweetBox({
             recJson.find((tweetLike) => {
               return (
                 tweetLike.user_id == userProfile?.user.user_id &&
-                tweetLike.tweet_id == hydrateTweet.tweet?.tweet_id
+                tweetLike.tweet_id == hydrateTweet?.tweet_id
               );
             })
           ) {
@@ -177,7 +177,7 @@ export default function TweetBox({
           <p className="font-Montserrat flex items-center flex-grow justify-end px-4 text-[#98a1a1] text-xs">
             {Math.floor(
               (new Date().getTime() -
-                new Date(hydrateTweet.tweet?.date_created).getTime()) /
+                new Date(hydrateTweet?.date_created).getTime()) /
                 1000 /
                 60
             )}
@@ -185,11 +185,11 @@ export default function TweetBox({
           </p>
         </div>
         <p className="text-[#333333] opacity-90 font-Outfit font-extralight py-5 px-24">
-          {hydrateTweet.tweet?.content}
+          {hydrateTweet?.content}
         </p>
-        {hydrateTweet.tweet?.image ? (
+        {hydrateTweet?.image ? (
           <div>
-            <img src={hydrateTweet.tweet?.image} alt="Mock" />
+            <img src={hydrateTweet?.image} alt="Mock" />
           </div>
         ) : (
           ""
@@ -215,7 +215,7 @@ export default function TweetBox({
                     await fetch("/api/tweets/likes/unlike", {
                       method: "POST",
                       body: JSON.stringify({
-                        tweetID: hydrateTweet.tweet?.tweet_id,
+                        tweetID: hydrateTweet?.tweet_id,
                         userID: userProfile?.user.user_id,
                       }),
                     });
@@ -234,13 +234,13 @@ export default function TweetBox({
                     await fetch("/api/tweets/likes/like", {
                       method: "POST",
                       body: JSON.stringify({
-                        tweetID: hydrateTweet.tweet?.tweet_id,
+                        tweetID: hydrateTweet?.tweet_id,
                         userID: userProfile?.user.user_id,
                       }),
                     });
                     setPostLikes([
                       {
-                        tweet_id: hydrateTweet.tweet?.tweet_id,
+                        tweet_id: hydrateTweet?.tweet_id,
                         user_id: userProfile?.user.user_id as number,
                       },
                       ...(postLikes as Like[]),
@@ -282,7 +282,7 @@ export default function TweetBox({
                     await fetch("/api/tweets/replies/create", {
                       method: "POST",
                       body: JSON.stringify({
-                        tweetID: hydrateTweet.tweet?.tweet_id,
+                        tweetID: hydrateTweet?.tweet_id,
                         userID: userProfile?.user.user_id,
                         replyContent: commentValue,
                       }),
@@ -300,13 +300,17 @@ export default function TweetBox({
               </button>
             </div>
           </div>
-          <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[20px] grid">
-            {postComments?.map((postComment) => {
-              return (
-                <Reply postComment={postComment} key={postComment.user_id} />
-              );
-            })}
-          </div>
+          {postComments?.length > 0 ? (
+            <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[20px] grid">
+              {postComments?.map((postComment) => {
+                return (
+                  <Reply postComment={postComment} key={postComment.user_id} />
+                );
+              })}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       ) : (
         ""

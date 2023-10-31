@@ -5,7 +5,7 @@ export async function POST(postReq: NextRequest): Promise<NextResponse<Reply>> {
   const postBody = await postReq.json();
   const tweetID = postBody.tweetID;
   const replyContent = postBody.replyContent;
-  const userID = postBody.replyID;
+  const userID = postBody.userID;
 
   const replyID = Math.floor(Math.random() * 10000);
 
@@ -23,19 +23,6 @@ export async function POST(postReq: NextRequest): Promise<NextResponse<Reply>> {
       reply_content: replyContent,
     }),
   });
-
-  console.log(
-    JSON.stringify({
-      user_id: userID,
-      reply_id: replyID,
-      tweet_id: tweetID,
-      date_created: new Date(),
-      date_updated: new Date(),
-      reply_content: replyContent,
-    })
-  );
-
-  console.log(createReply.status);
 
   const addedComment: Reply = {
     user_id: userID,

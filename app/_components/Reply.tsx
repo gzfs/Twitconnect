@@ -12,7 +12,7 @@ export default function Reply({ postComment }: { postComment: Reply }) {
       fetch("/api/user/fetchid", {
         method: "POST",
         body: JSON.stringify({
-          userID: 16987660,
+          userID: postComment.user_id,
         }),
       })
         .then((recResponse) => {

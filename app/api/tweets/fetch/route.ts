@@ -7,8 +7,10 @@ export async function POST(
   const postBody = await postReq.json();
   const userID = postBody.userID;
 
+  console.log(userID);
+
   const mockTweet = await (
-    await fetch(`${process.env.BASE_URL}/api/tweet/${92197}`, {
+    await fetch(`${process.env.BASE_URL}/api/me/tweets/${userID}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -16,7 +18,5 @@ export async function POST(
     })
   ).json();
 
-  const recTweets: Tweet[] = [mockTweet];
-
-  return NextResponse.json(recTweets);
+  return NextResponse.json(mockTweet.recommendations);
 }

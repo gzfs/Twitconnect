@@ -22,6 +22,9 @@ export function IcBaselineAccountCircle(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+const randomColor = require("randomcolor");
+const randomColors = randomColor();
+
 export default function Sidebar({
   userSession,
   userHandle,
@@ -54,12 +57,22 @@ export default function Sidebar({
                 setIsMiniMenuVisible(!isMiniMenuVisible);
               }}
             >
-              <img
-                src={userSession.user?.profile_pic as string}
-                alt="Profile"
-                width={30}
-                className="rounded-full mt-2"
-              />
+              {userSession?.user.profile_pic ? (
+                <img
+                  src={userSession.user.profile_pic as string}
+                  alt="Profile"
+                  className="w-[40px]"
+                />
+              ) : (
+                <div
+                  className="w-[40px] h-[40px] rounded-full flex items-center justify-center text-xl font-Outfit font-bold text-white"
+                  style={{
+                    backgroundColor: `${randomColors}`,
+                  }}
+                >
+                  {userSession?.user.username.charAt(0)}
+                </div>
+              )}
             </button>
             {isMiniMenuVisible ? (
               <div className="absolute bottom-12 text-xs left-0 bg-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] px-6 rounded-2xl">

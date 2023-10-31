@@ -1,17 +1,9 @@
-import { TweetResponse } from "@/app/_types/Tweet.types";
+import { Tweet } from "@/app/_types/Tweet.types";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(postReq: NextRequest): Promise<
-  NextResponse<
-    | TweetResponse[]
-    | {
-        message: "No Post";
-        status: "200";
-        time_taken: "6ms";
-        tweet: [];
-      }[]
-  >
-> {
+export async function POST(
+  postReq: NextRequest
+): Promise<NextResponse<Tweet[] | {}[]>> {
   const postBody = await postReq.json();
   const userID = postBody.userID;
 
@@ -26,15 +18,10 @@ export async function POST(postReq: NextRequest): Promise<
   );
 
   if (userTweets.status === 200) {
-    return NextResponse.json(await userTweets.json());
+    const postJson = await userTweets.json();
+
+    return NextResponse.json(postJson.tweets);
   } else {
-    return NextResponse.json([
-      {
-        message: "No Post",
-        status: "200",
-        time_taken: "6ms",
-        tweet: [],
-      },
-    ]);
+    return NextResponse.json([{}]);
   }
 }

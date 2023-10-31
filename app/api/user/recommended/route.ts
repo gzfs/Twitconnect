@@ -7,6 +7,10 @@ export async function POST(
   const postBody = await postReq.json();
   const userID = postBody.userID;
 
+  const fetchUsers = await (
+    await fetch(`${process.env.BASE_URL}/api/me/users/${userID}`)
+  ).json();
+
   const fetchedUsers = await (
     await fetch("http://localhost:3000/api/user/fetchid", {
       method: "POST",
@@ -16,5 +20,5 @@ export async function POST(
     })
   ).json();
 
-  return NextResponse.json([fetchedUsers.user]);
+  return NextResponse.json([fetchUsers.recommendations]);
 }

@@ -10,7 +10,7 @@ import Navbar from "../../_components/Navbar";
 import TweetBox from "../../_components/Tweet";
 import { useEffect, useState } from "react";
 import { User } from "../../_types/User.types";
-import { TweetResponse } from "../../_types/Tweet.types";
+import { Tweet } from "../../_types/Tweet.types";
 import { Data } from "@/app/page";
 
 export default function HomePage({
@@ -21,49 +21,51 @@ export default function HomePage({
   const userSession = useSession();
   const [recommendedUsers, setRecommendedUsers] = useState<User[]>();
   const [userProfile, setUserProfile] = useState<Data>();
-  const [recommendedPosts, setRecommendedPosts] = useState<TweetResponse[]>();
+  const [recommendedPosts, setRecommendedPosts] = useState<Tweet[]>();
 
   useEffect(() => {
-    fetch("/api/tweets/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        userID: params.user_handle,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (userProfile)
+      fetch("/api/tweets/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          userID: userProfile?.user.user_id,
+        }),
       })
-      .then((recJson) => {
-        setRecommendedPosts(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setRecommendedPosts(recJson);
+        });
 
-    fetch("/api/user/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        userHandle: params.user_handle,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!userProfile)
+      fetch("/api/user/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          userHandle: params.user_handle,
+        }),
       })
-      .then((recJson) => {
-        setUserProfile(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setUserProfile(recJson);
+        });
 
-    fetch("/api/user/recommended", {
-      method: "POST",
-      body: JSON.stringify({
-        userID: 1,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (userProfile)
+      fetch("/api/user/recommended", {
+        method: "POST",
+        body: JSON.stringify({
+          userID: userProfile.user.user_id,
+        }),
       })
-      .then((recJson) => {
-        console.log(recJson);
-        setRecommendedUsers(recJson);
-      });
-  }, [params.user_handle]);
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setRecommendedUsers(recJson[0]);
+        });
+  }, [userProfile]);
   return (
     <main className="grid md:grid-cols-9 py-5 md:py-12 px-5 sm:px-10 md:px-10 font-Montserrat">
       <div className="col-span-1 h-full m-2 rounded-xl hidden md:block">
@@ -92,7 +94,7 @@ export default function HomePage({
               <TweetBox
                 userSession={userSession.data as Session}
                 hydrateTweet={userPost}
-                key={userPost.tweet.tweet_id}
+                key={userPost.tweet_id}
               />
             );
           })}

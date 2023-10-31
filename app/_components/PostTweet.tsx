@@ -12,7 +12,7 @@ export default function PostTweet({
   userID: number;
   userPhoto: string;
   setInitialTweets: CallableFunction;
-  initialTweets: TweetResponse[] | undefined;
+  initialTweets: Tweet[] | undefined;
   userHandle: string;
 }) {
   const [postText, setPostText] = useState("");
@@ -81,24 +81,9 @@ export default function PostTweet({
               ).json();
               setUploadState(false);
               if (initialTweets) {
-                setInitialTweets([
-                  {
-                    message: "Tweet found.",
-                    status: "success",
-                    time_taken: "1ms",
-                    tweet: addedPost,
-                  },
-                  ...initialTweets,
-                ]);
+                setInitialTweets([addedPost, ...initialTweets]);
               } else {
-                setInitialTweets([
-                  {
-                    message: "Tweet found.",
-                    status: "success",
-                    time_taken: "1ms",
-                    tweet: addedPost,
-                  },
-                ]);
+                setInitialTweets([addedPost]);
               }
             }}
           >

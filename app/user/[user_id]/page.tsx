@@ -19,11 +19,14 @@ export interface ResTweet {
   tweets: Tweet[];
 }
 
+const randomColor = require("randomcolor");
+const randomColors = randomColor();
+
 export default function Profile({ params }: { params: { user_id: string } }) {
   const userSession = useSession();
   const [recommendedUsers, setRecommendedUsers] = useState<User[]>();
   const [userProfile, setUserProfile] = useState<Data>();
-  const [userPosts, setUserPosts] = useState<ResTweet>();
+  const [userPosts, setUserPosts] = useState<Tweet[]>();
 
   useEffect(() => {
     if (!userProfile)
@@ -65,7 +68,7 @@ export default function Profile({ params }: { params: { user_id: string } }) {
           return recResponse.json();
         })
         .then((recJson) => {
-          setRecommendedUsers(recJson);
+          setRecommendedUsers(recJson[0]);
         });
   }, [params.user_id, userProfile]);
 
@@ -88,15 +91,26 @@ export default function Profile({ params }: { params: { user_id: string } }) {
           Profile
         </p>
         <div className="py-10 grid grid-cols-7 lg:grid-cols-7">
-          <div
-            className="overflow-hidden col-span-3 lg:col-span-2 w-[150px] rounded-full h-[150px] bg-center bg-cover"
-            style={{
-              backgroundImage: `url(${userProfile?.user.profile_pic})`,
-            }}
-          ></div>
+          {userProfile?.user.profile_pic ? (
+            <div
+              className="overflow-hidden col-span-3 lg:col-span-2 w-[150px] rounded-full h-[150px] bg-center bg-cover"
+              style={{
+                backgroundImage: `url(${userProfile?.user.profile_pic})`,
+              }}
+            ></div>
+          ) : (
+            <div
+              className="w-[150px] h-[150px] col-span-3 md:col-span-2 rounded-full flex items-center justify-center text-6xl font-Outfit font-bold text-white"
+              style={{
+                backgroundColor: `${randomColors}`,
+              }}
+            >
+              {userProfile?.user.username.charAt(0)}
+            </div>
+          )}
           <div className="col-span-4 lg:col-span-4 w-full place-self-center">
             <p className="text-4xl text-[#333333] opacity-90 font-Outfit font-bold">
-              {userProfile?.user.username}
+              {userProfile?.user.username.split(" ")[0]}
             </p>
             <p className="font-Outfit text-[#333333] opacity-90 font-extralight">
               @{userProfile?.user.handle}
@@ -104,18 +118,12 @@ export default function Profile({ params }: { params: { user_id: string } }) {
           </div>
         </div>
         <div className="grid gap-y-10">
-          {userPosts && userPosts.tweets.length > 0
-            ? userPosts?.tweets.map((userPost) => {
+          {userPosts && userPosts.length > 0
+            ? userPosts?.map((userPost) => {
                 return (
                   <TweetBox
                     userSession={userSession.data as Session}
-                    hydrateTweet={{
-                      message: userPosts?.message,
-                      status: userPosts?.status,
-                      time_taken: userPosts.time_taken,
-
-                      tweet: userPost,
-                    }}
+                    hydrateTweet={userPost}
                     key={userPost?.tweet_id}
                   />
                 );
