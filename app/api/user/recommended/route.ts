@@ -17,7 +17,7 @@ export async function POST(
       profile_pic: "/assets/images/GigaMurugan.png",
       banner: "",
       date_created: new Date(),
-      updated_at: new Date(),
+      date_updated: new Date(),
     },
     {
       user_id: 1,
@@ -29,7 +29,7 @@ export async function POST(
       profile_pic: "/assets/images/GigaMurugan.png",
       banner: "",
       date_created: new Date(),
-      updated_at: new Date(),
+      date_updated: new Date(),
     },
   ]);
 }
