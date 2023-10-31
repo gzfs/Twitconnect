@@ -57,7 +57,7 @@ export default function Profile({ params }: { params: { user_id: string } }) {
         console.log(recJson);
         setRecommendedUsers(recJson);
       });
-  }, []);
+  }, [params.user_id]);
 
   return (
     <main className="grid md:grid-cols-9 py-5 md:py-12 px-5 sm:px-10 md:px-10 font-Montserrat">
@@ -98,7 +98,10 @@ export default function Profile({ params }: { params: { user_id: string } }) {
         <div className="md:my-5">
           <SearchBar />
         </div>
-        <Recommended recommendedUsers={recommendedUsers as User[]} />
+        <Recommended
+          recommendedUsers={recommendedUsers as User[]}
+          userID={userProfile?.user_id as number}
+        />
       </div>
     </main>
   );

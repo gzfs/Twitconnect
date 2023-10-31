@@ -246,7 +246,10 @@ export default function TweetBox({
           <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[30px] grid">
             {postComments?.map((postComment) => {
               return (
-                <div className="grid grid-cols-8 gap-x-4 w-full">
+                <div
+                  className="grid grid-cols-8 gap-x-4 w-full"
+                  key={postComment.tweet_id}
+                >
                   <div className="overflow-hidden m-5 rounded-full w-fit col-span-1">
                     <img
                       src={postComment.profile_pic}

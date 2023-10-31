@@ -58,7 +58,7 @@ export default function HomePage({ params }: { params: { user_id: string } }) {
         console.log(recJson);
         setRecommendedUsers(recJson);
       });
-  }, []);
+  }, [params.user_id]);
 
   return (
     <main className="grid md:grid-cols-9 py-5 md:py-12 px-5 sm:px-10 md:px-10 font-Montserrat">

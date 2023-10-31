@@ -8,7 +8,7 @@ export default function Home() {
 
   return (
     <main className="h-screen grid md:grid-cols-2 place-items-center mx-10 my-10 sm:mx-0 sm:my-0">
-      <img src="/assets/images/twitter.png" width={400} />
+      <img src="/assets/images/twitter.png" width={400} alt="Twitconnect" />
       <div>
         <div className="grid gap-y-4">
           <div className="text-6xl font-Outfit text-[#03a9f4] font-bold">
