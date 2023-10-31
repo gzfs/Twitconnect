@@ -9,28 +9,36 @@ import Navbar from "../../_components/Navbar";
 import TweetBox from "../../_components/Tweet";
 import { useEffect, useState } from "react";
 import { User } from "@/app/_types/User.types";
-import { TweetResponse } from "@/app/_types/Tweet.types";
+import { Tweet, TweetResponse } from "@/app/_types/Tweet.types";
 import { Data } from "@/app/page";
+
+export interface ResTweet {
+  message: string;
+  status: string;
+  time_taken: string;
+  tweets: Tweet[];
+}
 
 export default function Profile({ params }: { params: { user_id: string } }) {
   const userSession = useSession();
   const [recommendedUsers, setRecommendedUsers] = useState<User[]>();
   const [userProfile, setUserProfile] = useState<Data>();
-  const [userPosts, setUserPosts] = useState<TweetResponse[]>();
+  const [userPosts, setUserPosts] = useState<ResTweet>();
 
   useEffect(() => {
-    fetch("/api/user/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        userHandle: params.user_id,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!userProfile)
+      fetch("/api/user/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          userHandle: params.user_id,
+        }),
       })
-      .then((recJson) => {
-        setUserProfile(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setUserProfile(recJson);
+        });
 
     if (userProfile)
       fetch("/api/tweets/user", {
@@ -46,22 +54,20 @@ export default function Profile({ params }: { params: { user_id: string } }) {
           setUserPosts(recJson);
         });
 
-    fetch("/api/user/recommended", {
-      method: "POST",
-      body: JSON.stringify({
-        userID: 1,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!recommendedUsers)
+      fetch("/api/user/recommended", {
+        method: "POST",
+        body: JSON.stringify({
+          userID: 1,
+        }),
       })
-      .then((recJson) => {
-        console.log(recJson);
-        setRecommendedUsers(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setRecommendedUsers(recJson);
+        });
   }, [params.user_id, userProfile]);
-
-  console.log(userPosts?.length);
 
   return (
     <main className="grid md:grid-cols-9 py-5 md:py-12 px-5 sm:px-10 md:px-10 font-Montserrat">
@@ -98,13 +104,19 @@ export default function Profile({ params }: { params: { user_id: string } }) {
           </div>
         </div>
         <div className="grid gap-y-10">
-          {userPosts
-            ? userPosts?.map((userPost) => {
+          {userPosts && userPosts.tweets.length > 0
+            ? userPosts?.tweets.map((userPost) => {
                 return (
                   <TweetBox
                     userSession={userSession.data as Session}
-                    hydrateTweet={userPost}
-                    key={userPost?.tweet?.tweet_id}
+                    hydrateTweet={{
+                      message: userPosts?.message,
+                      status: userPosts?.status,
+                      time_taken: userPosts.time_taken,
+
+                      tweet: userPost,
+                    }}
+                    key={userPost?.tweet_id}
                   />
                 );
               })

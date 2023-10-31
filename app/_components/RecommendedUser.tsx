@@ -58,6 +58,8 @@ export function MaterialSymbolsAddCircleOutlineRounded(
   );
 }
 
+const randomColor = require("randomcolor");
+
 export default function RecommenedUser({
   userID,
   recommendedUser,
@@ -73,7 +75,18 @@ export default function RecommenedUser({
       key={recommendedUser.user_id}
     >
       <div className="flex items-center flex-grow">
-        <img src={recommendedUser.profile_pic as string} alt="Profile" />
+        {recommendedUser.profile_pic ? (
+          <img src={recommendedUser.profile_pic as string} alt="Profile" />
+        ) : (
+          <div
+            className="w-[50px] h-[50px] rounded-[20px] flex items-center justify-center text-xl font-Outfit font-bold text-white"
+            style={{
+              backgroundColor: `${randomColor()}`,
+            }}
+          >
+            {recommendedUser.username.charAt(0)}
+          </div>
+        )}
         <div className="flex flex-col text-xs ml-4">
           <p className="text-[#3D534F]">{recommendedUser.username}</p>
           <p>@{recommendedUser.handle}</p>

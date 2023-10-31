@@ -14,8 +14,6 @@ export async function POST(
   const postBody = await postReq.json();
   const tweetID = postBody.tweetID;
 
-  console.log(tweetID);
-
   const tweetLikes: Root = await (
     await fetch(`http://194.233.84.2:6969/api/like/${tweetID}`, {
       method: "GET",

@@ -1,10 +1,10 @@
 import { Session } from "next-auth";
 import { SVGProps, useEffect, useState } from "react";
-import { Tweet, TweetResponse } from "../_types/Tweet.types";
-import { User } from "../_types/User.types";
+import { TweetResponse } from "../_types/Tweet.types";
 import { Like } from "../_types/Like.types";
 import { ReplyWithUser } from "../_types/Replies.types";
 import { Data } from "../page";
+import Reply from "./Reply";
 
 export function MaterialSymbolsSendRounded(props: SVGProps<SVGSVGElement>) {
   return (
@@ -59,6 +59,9 @@ export function MaterialSymbolsFavoriteRounded(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+const randomColor = require("randomcolor");
+const randomColors: any = randomColor();
+
 export default function TweetBox({
   userSession,
   hydrateTweet,
@@ -72,58 +75,76 @@ export default function TweetBox({
   const [commentValue, setCommentValue] = useState("");
   const [commentVisible, setCommentVisible] = useState(false);
   const [postComments, setPostComments] = useState<ReplyWithUser[]>();
+  const [tweetUser, setTweetUser] = useState<Data>();
 
   useEffect(() => {
-    fetch("/api/tweets/replies/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        tweetID: hydrateTweet.tweet?.tweet_id,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!postComments)
+      fetch("/api/tweets/replies/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          tweetID: hydrateTweet.tweet?.tweet_id,
+        }),
       })
-      .then((recJson) => {
-        setPostComments(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setPostComments(recJson);
+        });
 
-    fetch("/api/user/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        userHandle: "vismdbs",
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!userProfile)
+      fetch("/api/user/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          userHandle: userSession?.user?.email?.split("@")[0],
+        }),
       })
-      .then((recJson) => {
-        setUserProfile(recJson);
-      });
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setUserProfile(recJson);
+        });
 
-    fetch("/api/tweets/likes/fetch", {
-      method: "POST",
-      body: JSON.stringify({
-        tweetID: hydrateTweet.tweet?.tweet_id,
-      }),
-    })
-      .then((recResponse) => {
-        return recResponse.json();
+    if (!tweetUser)
+      fetch("/api/user/fetchid", {
+        method: "POST",
+        body: JSON.stringify({
+          userID: hydrateTweet.tweet.user_id,
+        }),
       })
-      .then((recJson: Like[]) => {
-        if (
-          recJson.find((tweetLike) => {
-            return (
-              tweetLike.user_id == hydrateTweet.tweet?.user_id &&
-              tweetLike.tweet_id == hydrateTweet.tweet?.tweet_id
-            );
-          })
-        ) {
-          setUserLiked(true);
-        }
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson) => {
+          setTweetUser(recJson);
+        });
 
-        setPostLikes(recJson);
-      });
-  }, []);
+    if (userProfile && !postLikes)
+      fetch("/api/tweets/likes/fetch", {
+        method: "POST",
+        body: JSON.stringify({
+          tweetID: hydrateTweet.tweet?.tweet_id,
+        }),
+      })
+        .then((recResponse) => {
+          return recResponse.json();
+        })
+        .then((recJson: Like[]) => {
+          if (
+            recJson.find((tweetLike) => {
+              return (
+                tweetLike.user_id == userProfile?.user.user_id &&
+                tweetLike.tweet_id == hydrateTweet.tweet?.tweet_id
+              );
+            })
+          ) {
+            setUserLiked(true);
+          }
+
+          setPostLikes(recJson);
+        });
+  }, [userProfile]);
 
   return (
     <>
@@ -131,15 +152,26 @@ export default function TweetBox({
         <div className="flex pt-8 px-8">
           <div className="flex">
             <div className="overflow-hidden rounded-[20px]">
-              <img
-                src={userProfile?.user.profile_pic}
-                alt="Profile"
-                className="w-[50px]"
-              />
+              {tweetUser?.user.profile_pic ? (
+                <img
+                  src={tweetUser.user.profile_pic as string}
+                  alt="Profile"
+                  className="w-[50px]"
+                />
+              ) : (
+                <div
+                  className="w-[50px] h-[50px] rounded-[20px] flex items-center justify-center text-xl font-Outfit font-bold text-white"
+                  style={{
+                    backgroundColor: `${randomColors}`,
+                  }}
+                >
+                  {tweetUser?.user.username.charAt(0)}
+                </div>
+              )}
             </div>
             <div className="flex justify-center flex-col ml-4 text-[#333333] opacity-90">
-              <p className="text-sm">{userProfile?.user.username}</p>
-              <p className="text-xs">@{userProfile?.user.handle}</p>
+              <p className="text-sm">{tweetUser?.user.username}</p>
+              <p className="text-xs">@{tweetUser?.user.handle}</p>
             </div>
           </div>
           <p className="font-Montserrat flex items-center flex-grow justify-end px-4 text-[#98a1a1] text-xs">
@@ -271,24 +303,7 @@ export default function TweetBox({
           <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[20px] grid">
             {postComments?.map((postComment) => {
               return (
-                <div
-                  className="flex w-full p-3 items-center"
-                  key={postComment.tweet_id}
-                >
-                  <div className="overflow-hidden rounded-[15px] w-fit">
-                    <img
-                      src={postComment.profile_pic}
-                      alt="Profile"
-                      className="w-[40px]"
-                    />
-                  </div>
-                  <div className="text-[#333333] opacity-90 flex flex-col justify-evenly h-full mx-2">
-                    <p className="text-xs font-bold">@gzfs</p>
-                    <p className="text-xs font-medium">
-                      {postComment.reply_content}
-                    </p>
-                  </div>
-                </div>
+                <Reply postComment={postComment} key={postComment.user_id} />
               );
             })}
           </div>

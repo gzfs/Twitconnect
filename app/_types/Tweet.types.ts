@@ -11,12 +11,5 @@ export interface TweetResponse {
   message: string;
   status: string;
   time_taken: string;
-  tweet: {
-    content: string;
-    date_created: string;
-    date_updated: string;
-    tweet_id: number;
-    user_id: number;
-    image?: string;
-  };
+  tweet: Tweet;
 }

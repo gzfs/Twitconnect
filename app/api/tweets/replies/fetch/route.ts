@@ -7,6 +7,14 @@ export async function POST(
   const postBody = await postReq.json();
   const tweetID = postBody.tweetID;
 
+  console.log(tweetID);
+
+  const fetchedReplies = await fetch(
+    `${process.env.BASE_URL}/api/reply/${tweetID}`
+  );
+
+  console.log(fetchedReplies.status);
+
   const tweetReplies: ReplyWithUser[] = [
     {
       user_id: 1,
