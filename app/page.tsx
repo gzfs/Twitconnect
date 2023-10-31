@@ -33,7 +33,7 @@ export default function Home() {
         ) : (
           <div className="mt-10">
             <Link
-              href="/home"
+              href="/home/gzfs"
               className="bg-[#03a9f4] py-3 px-10 text-white font-Outfit rounded-full"
             >
               Start Chatting
