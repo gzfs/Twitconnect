@@ -178,6 +178,20 @@ export default function TweetBox({
                         tweetID: hydrateTweet.tweet_id,
                       }),
                     });
+                    setPostLikes(
+                      postLikes?.filter((postLike) => {
+                        return postLike.user_id != userProfile?.user_id;
+                      })
+                    );
+
+                    console.log(
+                      postLikes?.filter((postLike) => {
+                        return postLike.user_id != userProfile?.user_id;
+                      })
+                    );
+
+                    console.log(userProfile?.user_id);
+
                     setUserLiked(false);
                   }}
                 />
@@ -191,6 +205,13 @@ export default function TweetBox({
                         tweetID: hydrateTweet.tweet_id,
                       }),
                     });
+                    setPostLikes([
+                      {
+                        tweet_id: hydrateTweet.tweet_id,
+                        user_id: userProfile?.user_id as number,
+                      },
+                      ...(postLikes as Like[]),
+                    ]);
                     setUserLiked(true);
                   }}
                 />
@@ -204,22 +225,25 @@ export default function TweetBox({
       </div>{" "}
       {commentVisible ? (
         <div className="grid gap-y-3">
-          <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[30px] grid">
-            <div className="grid grid-cols-8 gap-x-4 w-full">
-              <div className="overflow-hidden m-5 rounded-full w-fit col-span-1">
+          <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[20px] grid">
+            <div className="flex w-full justify-between p-3">
+              <div className="overflow-hidden rounded-[15px] w-fit">
                 <img
                   src={userSession?.user?.image as string}
                   alt="Profile"
-                  className="w-[75px]"
+                  className="w-[40px]"
                 />
               </div>
               <input
                 type="text"
                 placeholder="Comment..."
-                className="outline-none border-none col-span-6"
+                className="outline-none border-none text-sm flex-grow mx-4"
+                onChange={(eV) => {
+                  setCommentValue(eV.target.value);
+                }}
               />
               <button
-                className="col-span-1 text-3xl place-content-end"
+                className="text-2xl place-content-end"
                 onClick={async () => {
                   const addedComment = await (
                     await fetch("/api/tweets/replies/create", {
@@ -243,23 +267,26 @@ export default function TweetBox({
               </button>
             </div>
           </div>
-          <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[30px] grid">
+          <div className="shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] rounded-[20px] grid">
             {postComments?.map((postComment) => {
               return (
                 <div
-                  className="grid grid-cols-8 gap-x-4 w-full"
+                  className="flex w-full p-3 items-center"
                   key={postComment.tweet_id}
                 >
-                  <div className="overflow-hidden m-5 rounded-full w-fit col-span-1">
+                  <div className="overflow-hidden rounded-[15px] w-fit">
                     <img
                       src={postComment.profile_pic}
                       alt="Profile"
-                      className="w-[75px]"
+                      className="w-[40px]"
                     />
                   </div>
-                  <p className="col-span-7 place-self-center">
-                    {postComment.reply_content}
-                  </p>
+                  <div className="text-[#333333] opacity-90 flex flex-col justify-evenly h-full mx-2">
+                    <p className="text-xs font-bold">@gzfs</p>
+                    <p className="text-xs font-medium">
+                      {postComment.reply_content}
+                    </p>
+                  </div>
                 </div>
               );
             })}

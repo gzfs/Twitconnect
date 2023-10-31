@@ -15,7 +15,7 @@ export async function POST(
     tweet_id: tweetID,
     date_created: new Date(),
     date_updated: new Date(),
-    reply_content: "Hello",
+    reply_content: replyContent,
     handle: "gzfs",
     profile_pic: "/assets/images/GigaMurugan.png",
   };

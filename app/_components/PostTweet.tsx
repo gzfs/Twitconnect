@@ -3,10 +3,12 @@ import ImageUpload from "./ImageUpload";
 import { Tweet } from "../_types/Tweet.types";
 
 export default function PostTweet({
+  userPhoto,
   setInitialTweets,
   initialTweets,
   userHandle,
 }: {
+  userPhoto: string;
   setInitialTweets: CallableFunction;
   initialTweets: Tweet[] | undefined;
   userHandle: string;
@@ -20,7 +22,11 @@ export default function PostTweet({
     <div className="rounded-[60px] shadow-[0_3px_10px_rgb(0,0,0,0.2)] mb-10 text-sm font-Montserrat bg-white flex flex-col justify-between">
       <div className="flex py-8 px-8">
         <div>
-          <img src="/assets/images/GigaMurugan.png" alt="Profile" />
+          <img
+            src={userPhoto}
+            alt="Profile"
+            className="w-[50px] rounded-[21px]"
+          />
         </div>
         <input
           type="text"

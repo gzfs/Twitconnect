@@ -7,5 +7,5 @@ export type User = {
   bio: string;
   profile_pic: string;
   date_created: Date;
-  updated_at: Date;
+  date_updated: Date;
 };

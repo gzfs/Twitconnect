@@ -5,7 +5,7 @@ export async function POST(postReq: NextRequest): Promise<NextResponse<User>> {
   const postBody = await postReq.json();
   const userHandle = postBody.userHandle;
   return NextResponse.json({
-    user_id: 0,
+    user_id: 1,
     email: "vismdbs@gmail.com",
     bio: "Ijboling 😎",
     date_created: new Date(),
@@ -14,5 +14,6 @@ export async function POST(postReq: NextRequest): Promise<NextResponse<User>> {
     profile_pic: "/assets/images/GigaMurugan.png",
     updated_at: new Date(),
     username: "Vishal",
+    date_updated: new Date(),
   });
 }

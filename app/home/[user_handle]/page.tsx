@@ -70,6 +70,7 @@ export default function HomePage({ params }: { params: { user_id: string } }) {
       </div>
       <div className="lg:col-span-5 md:col-span-5 h-full md:pr-10 rounded-xl my-5 md:my-0">
         <PostTweet
+          userPhoto={userSession.data?.user?.image as string}
           initialTweets={recommendedPosts}
           setInitialTweets={setRecommendedPosts}
           userHandle={userProfile?.handle as string}
